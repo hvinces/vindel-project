@@ -1,0 +1,770 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VINDEL Project BIM — Control de Proyectos &amp; BIM</title>
+<meta name="description" content="Consultoría independiente en control de proyectos y BIM para construcción. Perú y remoto Europa.">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=Source+Sans+3:wght@400;500;600;700&display=swap');
+
+  :root{
+    --bg:#FFFFFF;
+    --surface:#F6F5F2;
+    --surface-2:#EFEEE9;
+    --ink:#1E2023;
+    --ink-soft:#585B60;
+    --ink-faint:#8B8E93;
+    --line:#E3E1DB;
+    --accent:#A8543A;
+    --accent-strong:#7E3C29;
+    --accent-soft:#FCE6DC;
+    --accent-contrast:#FFFFFF;
+    --dark:#24262A;
+    --dark-ink:#F2F1ED;
+    --dark-ink-soft:#B7B9BC;
+    --dark-line:#3B3D41;
+    --shadow: 0 1px 2px rgba(30,32,35,.05), 0 16px 32px rgba(30,32,35,.08);
+  }
+  *{ box-sizing:border-box; }
+  html{ color-scheme: light; }
+  html[data-theme="dark"]{
+    color-scheme: dark;
+    --bg:#1B1C1F;
+    --surface:#232427;
+    --surface-2:#2B2C30;
+    --ink:#F2F1ED;
+    --ink-soft:#C3C4C7;
+    --ink-faint:#8B8E93;
+    --line:#3A3B3F;
+    --accent:#E08A66;
+    --accent-strong:#F2A585;
+    --accent-soft:#3A2A24;
+    --accent-contrast:#1B1C1F;
+    --dark:#0F1012;
+    --dark-ink:#F2F1ED;
+    --dark-ink-soft:#B7B9BC;
+    --dark-line:#2E2F33;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 16px 32px rgba(0,0,0,.4);
+  }
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Source Sans 3", ui-sans-serif, system-ui, sans-serif;
+    font-size:16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  img,svg{ max-width:100%; }
+  [hidden]{ display:none !important; }
+  h1,h2,h3,h4{
+    font-family:"Archivo", ui-sans-serif, sans-serif;
+    font-weight:800;
+    letter-spacing:-0.01em;
+    text-wrap:balance;
+    color:var(--ink);
+    margin:0;
+  }
+  a{ color:inherit; }
+  p{ margin:0; }
+
+  .wrap{
+    max-width:1180px;
+    margin:0 auto;
+    padding-inline:24px;
+  }
+  .eyebrow{
+    font-size:0.82rem;
+    font-weight:700;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--accent);
+  }
+
+  /* ---------- buttons / links ---------- */
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:13px 22px;
+    border-radius:3px;
+    font-weight:700;
+    font-size:0.95rem;
+    text-decoration:none;
+    border:1px solid transparent;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .btn-primary{ background:var(--accent); color:var(--accent-contrast); }
+  .btn-primary:hover{ background:var(--accent-strong); }
+  .btn-outline{ background:transparent; color:var(--ink); border-color:var(--line); }
+  .btn-outline:hover{ border-color:var(--accent); color:var(--accent); }
+  .btn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+
+  .link-arrow{
+    display:inline-flex; align-items:center; gap:6px;
+    font-weight:700;
+    font-size:0.92rem;
+    text-decoration:none;
+    color:var(--accent);
+    border-bottom:1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+    padding-bottom:2px;
+  }
+  .link-arrow svg{ width:14px; height:14px; transition:transform .15s ease; }
+  .link-arrow:hover{ border-color:var(--accent); }
+  .link-arrow:hover svg{ transform:translateX(3px); }
+
+  /* ---------- header ---------- */
+  header.site{
+    position:sticky; top:0; z-index:30;
+    background:color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{
+    display:flex; align-items:center; justify-content:space-between;
+    flex-wrap:wrap;
+    padding-block:16px;
+    gap:12px 20px;
+  }
+  .brand{
+    display:flex; align-items:center; gap:9px;
+    font-family:"Archivo", sans-serif;
+    font-weight:900;
+    font-size:1.2rem;
+    letter-spacing:-0.01em;
+    white-space:nowrap;
+  }
+  .brand .mark{
+    width:30px; height:30px; border-radius:3px;
+    background:var(--accent);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--accent-contrast);
+    font-family:"Archivo", sans-serif;
+    font-weight:900;
+    font-size:0.85rem;
+  }
+  .nav-links{
+    display:none;
+    gap:30px;
+    font-size:0.92rem;
+    font-weight:600;
+  }
+  .nav-links a{ text-decoration:none; color:var(--ink-soft); padding-block:4px; border-bottom:2px solid transparent; }
+  .nav-links a:hover{ color:var(--ink); border-color:var(--accent); }
+  @media (min-width:820px){ .nav-links{ display:flex; } }
+  .theme-toggle{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:38px; height:38px;
+    border-radius:50%;
+    border:1px solid var(--line);
+    background:var(--surface);
+    color:var(--ink-soft);
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .theme-toggle:hover{ border-color:var(--accent); color:var(--accent); }
+  .theme-toggle svg{ width:18px; height:18px; }
+  .theme-toggle .icon-moon{ display:none; }
+  html[data-theme="dark"] .theme-toggle .icon-sun{ display:none; }
+  html[data-theme="dark"] .theme-toggle .icon-moon{ display:block; }
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    overflow:hidden;
+    padding-block:120px 96px;
+    isolation:isolate;
+  }
+  @media (max-width:700px){
+    .hero{ padding-block:64px 40px; }
+    .hero h1{ font-size:clamp(1.9rem, 8vw, 2.6rem); }
+    .hero-sub{ font-size:0.98rem; }
+  }
+  .hero-media{ position:absolute; inset:0; z-index:-2; background:#12181B; }
+  .hero-media video{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    object-fit:cover;
+    opacity:0.32;
+  }
+  .hero-media::after{
+    content:"";
+    position:absolute; inset:0;
+    z-index:-1;
+    background:linear-gradient(180deg, rgba(15,16,18,.72), rgba(15,16,18,.85));
+  }
+  .hero-content{ max-width:660px; }
+  .hero .eyebrow{ color:var(--accent); }
+  .hero h1{
+    font-size:clamp(2.4rem, 4.6vw, 3.6rem);
+    line-height:1.04;
+    margin-top:16px;
+    color:#FFFFFF;
+  }
+  .hero h1 span{ color:var(--accent); }
+  .hero-sub{
+    max-width:50ch;
+    color:#C7C9CC;
+    font-size:1.08rem;
+    margin-top:18px;
+  }
+  .hero-actions{
+    display:flex; flex-wrap:wrap; align-items:center; gap:20px;
+    margin-top:32px;
+  }
+  .hero-actions .link-arrow{ color:#F2F1ED; }
+
+  .hero-visual{
+    position:relative;
+    aspect-ratio:4/5;
+    max-width:420px;
+    margin-inline:auto;
+    background:var(--accent-soft);
+    border-radius:6px;
+    overflow:hidden;
+    box-shadow:var(--shadow);
+  }
+  .hero-visual img{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    object-fit:cover;
+  }
+
+  /* ---------- stat band ---------- */
+  .stat-band{
+    background:var(--dark);
+    color:var(--dark-ink);
+    padding-block:44px;
+  }
+  .stat-grid{
+    display:grid; gap:28px;
+    grid-template-columns:repeat(auto-fit, minmax(180px,1fr));
+  }
+  .stat{ border-left:2px solid color-mix(in srgb, var(--dark-ink) 25%, transparent); padding-left:18px; }
+  .stat .n{
+    font-family:"Archivo", sans-serif;
+    font-weight:900;
+    font-size:clamp(2rem,4vw,2.6rem);
+    line-height:1;
+  }
+  .stat .l{ margin-top:8px; color:var(--dark-ink-soft); font-size:0.92rem; }
+
+  /* ---------- generic section ---------- */
+  .section{ padding-block:72px; }
+  .section.alt{ background:var(--surface); }
+  .section-head{
+    max-width:640px;
+    margin-bottom:44px;
+  }
+  .section-head h2{
+    font-size:clamp(1.9rem, 3.4vw, 2.5rem);
+    margin-top:10px;
+  }
+  .section-head p{
+    color:var(--ink-soft);
+    margin-top:14px;
+    font-size:1.02rem;
+  }
+
+  /* ---------- service cards ---------- */
+  .cards{
+    display:grid; gap:24px;
+    grid-template-columns:repeat(auto-fit, minmax(260px,1fr));
+  }
+  .card{
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:6px;
+    overflow:hidden;
+    display:flex; flex-direction:column;
+    transition:box-shadow .2s ease, transform .2s ease;
+  }
+  .card:hover{ box-shadow:var(--shadow); transform:translateY(-3px); }
+  .card-media{
+    aspect-ratio:16/10;
+    background:var(--accent-soft);
+    overflow:hidden;
+  }
+  .card-media img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .card-media svg{ width:56px; height:56px; }
+  .card-body{ padding:22px 22px 24px; display:flex; flex-direction:column; gap:10px; flex:1; }
+  .card-body .tag{ font-size:0.76rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink-faint); }
+  .card-body h3{ font-size:1.15rem; letter-spacing:-0.005em; }
+  .card-body p{ color:var(--ink-soft); font-size:0.95rem; flex:1; }
+  .card-body .link-arrow{ margin-top:6px; align-self:flex-start; }
+
+  /* ---------- coverage panels ---------- */
+  .panels{
+    display:grid; gap:24px;
+    grid-template-columns:1fr;
+  }
+  @media (min-width:760px){ .panels{ grid-template-columns:1fr 1fr; } }
+  .panel{
+    border-radius:6px;
+    padding:32px 28px;
+    border:1px solid var(--line);
+    background:var(--bg);
+    display:flex; flex-direction:column; gap:14px;
+    min-height:220px;
+  }
+  .panel.filled{ background:var(--accent); color:var(--accent-contrast); border-color:var(--accent); }
+  .panel.filled .eyebrow{ color:color-mix(in srgb, var(--accent-contrast) 75%, transparent); }
+  .panel.filled p{ color:color-mix(in srgb, var(--accent-contrast) 88%, transparent); }
+  .panel h3{ font-size:1.4rem; }
+  .panel p{ color:var(--ink-soft); font-size:0.98rem; }
+
+  /* ---------- statement band ---------- */
+  .statement{
+    background:var(--accent);
+    color:var(--accent-contrast);
+    padding-block:76px;
+    text-align:center;
+  }
+  .statement .wrap{ max-width:860px; }
+  .statement p.eyebrow{ color:color-mix(in srgb, var(--accent-contrast) 70%, transparent); justify-content:center; }
+  .statement h2{
+    color:var(--accent-contrast);
+    font-size:clamp(1.9rem, 4vw, 3rem);
+    line-height:1.12;
+    margin-top:14px;
+  }
+
+  /* ---------- methodology ---------- */
+  .steps{
+    display:grid; gap:0;
+    grid-template-columns:1fr;
+    border-top:1px solid var(--line);
+  }
+  @media (min-width:760px){ .steps{ grid-template-columns:repeat(4,1fr); border-top:none; } }
+  .step{
+    padding:24px 20px 24px 0;
+    border-bottom:1px solid var(--line);
+    position:relative;
+  }
+  @media (min-width:760px){
+    .step{ border-bottom:none; border-right:1px solid var(--line); padding:0 20px; }
+    .step:last-child{ border-right:none; }
+  }
+  .step .n{
+    font-family:"Archivo", sans-serif; font-weight:900;
+    font-size:1.6rem; color:var(--accent);
+  }
+  .step h4{ font-size:1.02rem; margin-top:10px; }
+  .step p{ color:var(--ink-soft); font-size:0.92rem; margin-top:8px; }
+
+  .tag-row{ display:flex; flex-wrap:wrap; gap:8px; margin-top:24px; }
+  .tag{
+    font-size:0.8rem; font-weight:600;
+    padding:6px 12px;
+    border:1px solid var(--line);
+    border-radius:20px;
+    color:var(--ink-soft);
+  }
+
+  /* ---------- about ---------- */
+  .about{
+    display:grid; gap:36px;
+    grid-template-columns:1fr;
+  }
+  @media (min-width:820px){ .about{ grid-template-columns:0.85fr 1.15fr; } }
+  .about-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:28px;
+  }
+  .about-card .avatar{
+    width:56px; height:56px; border-radius:50%;
+    background:var(--accent); color:var(--accent-contrast);
+    display:flex; align-items:center; justify-content:center;
+    font-family:"Archivo", sans-serif; font-weight:800; font-size:1.1rem;
+  }
+  .about-card .name{ font-size:1.3rem; margin-top:16px; }
+  .about-card .role{ color:var(--ink-soft); font-size:0.92rem; margin-top:6px; }
+  .about-card ul{ list-style:none; padding:0; margin:20px 0 0; display:flex; flex-direction:column; gap:10px; font-size:0.9rem; color:var(--ink-soft); }
+  .about-card ul li{ display:flex; gap:10px; }
+  .about-card ul li::before{ content:"✓"; color:var(--accent); font-weight:700; }
+  .about-text p{ color:var(--ink-soft); font-size:1.02rem; }
+  .about-text p + p{ margin-top:16px; }
+
+  /* ---------- contact CTA ---------- */
+  .cta{
+    background:var(--dark);
+    color:var(--dark-ink);
+    padding-block:72px;
+  }
+  .cta-inner{
+    display:flex; flex-wrap:wrap; gap:36px;
+    justify-content:space-between; align-items:center;
+  }
+  .cta h2{ color:var(--dark-ink); font-size:clamp(1.9rem,3.6vw,2.6rem); max-width:15ch; }
+  .cta-methods{ display:flex; flex-wrap:wrap; gap:14px; }
+  .cta-methods a{
+    display:inline-flex; align-items:center; gap:10px;
+    text-decoration:none; font-weight:700; font-size:1rem;
+    padding:15px 22px; border-radius:3px;
+  }
+  .cta-methods .primary{ background:#FFFFFF; color:#1E2023; }
+  .cta-methods .primary:hover{ opacity:0.9; }
+  .cta-methods .ghost{ border:1px solid var(--dark-line); color:var(--dark-ink); }
+  .cta-methods .ghost:hover{ border-color:var(--dark-ink-soft); }
+
+  /* ---------- footer ---------- */
+  footer{ padding-block:48px 28px; }
+  .footer-grid{
+    display:grid; gap:32px;
+    grid-template-columns:1.4fr repeat(2, 1fr);
+  }
+  @media (max-width:700px){
+    .footer-grid{ grid-template-columns:1fr 1fr; gap:28px 24px; }
+    .footer-brand{ grid-column:1 / -1; }
+  }
+  .footer-brand .brand{ margin-bottom:12px; }
+  .footer-brand p{ color:var(--ink-soft); font-size:0.9rem; max-width:32ch; }
+  .footer-col h5{ font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--ink-faint); margin-bottom:14px; }
+  .footer-col ul{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
+  .footer-col a{ text-decoration:none; color:var(--ink-soft); font-size:0.92rem; }
+  .footer-col a:hover{ color:var(--accent); }
+  .footer-bottom{
+    margin-top:40px; padding-top:20px;
+    border-top:1px solid var(--line);
+    display:flex; flex-wrap:wrap; gap:12px; justify-content:space-between;
+    font-size:0.8rem; color:var(--ink-faint);
+  }
+
+  @media (prefers-reduced-motion: no-preference){
+    .reveal{ animation: rise .6s ease-out both; }
+    @keyframes rise{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:translateY(0); } }
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap nav">
+    <div class="brand"><span class="mark">V</span>VINDEL Project BIM</div>
+    <nav class="nav-links">
+      <a href="#servicios">Servicios</a>
+      <a href="#metodologia">Metodología</a>
+      <a href="#cobertura">Cobertura</a>
+      <a href="#sobre-mi">Sobre mí</a>
+    </nav>
+    <a class="btn btn-primary" href="https://wa.me/51953949014" target="_blank" rel="noopener">Hablar por WhatsApp</a>
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Cambiar a modo oscuro">
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
+    </button>
+  </div>
+</header>
+
+<script>
+  (function(){
+    var root = document.documentElement;
+    var btn = document.getElementById('themeToggle');
+    var saved = null;
+    try { saved = localStorage.getItem('vindel-theme'); } catch(e){}
+    if (saved === 'dark') { root.setAttribute('data-theme','dark'); }
+    function updateLabel(){
+      var isDark = root.getAttribute('data-theme') === 'dark';
+      btn.setAttribute('aria-label', isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro');
+    }
+    updateLabel();
+    btn.addEventListener('click', function(){
+      var isDark = root.getAttribute('data-theme') === 'dark';
+      if (isDark) { root.removeAttribute('data-theme'); }
+      else { root.setAttribute('data-theme','dark'); }
+      try { localStorage.setItem('vindel-theme', isDark ? 'light' : 'dark'); } catch(e){}
+      updateLabel();
+    });
+  })();
+
+  document.addEventListener('DOMContentLoaded', function(){
+    var v = document.getElementById('heroVideo');
+    if (!v) return;
+    v.muted = true;
+    v.defaultMuted = true;
+    if (window.innerWidth > 700) {
+      v.src = 'img/video-obra-desktop.mp4';
+      v.load();
+    }
+    var p = v.play();
+    if (p && p.catch) { p.catch(function(){}); }
+  });
+</script>
+
+<main>
+  <section class="hero">
+    <div class="hero-media">
+      <video id="heroVideo" autoplay muted loop playsinline webkit-playsinline="true" preload="auto" src="img/video-obra-vertical.mp4"></video>
+    </div>
+    <div class="wrap hero-content">
+      <p class="eyebrow reveal">Consultoría en control de proyectos y BIM</p>
+      <h1 class="reveal">Control de proyectos y BIM para <span>decisiones de obra en tiempo real</span></h1>
+      <p class="hero-sub reveal">
+        Estructuro el control de tu proyecto de construcción de punta a punta —EDT, metrado, presupuesto,
+        cronograma, avance y valor ganado (EVM)— con modelado BIM y automatización propia. Atiendo proyectos
+        en Perú y, de forma remota, en Europa.
+      </p>
+      <div class="hero-actions reveal">
+        <a class="btn btn-primary" href="https://wa.me/51953949014" target="_blank" rel="noopener">Hablar por WhatsApp</a>
+        <a class="link-arrow" href="#servicios">Ver todos los servicios
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="stat-band">
+    <div class="wrap stat-grid">
+      <div class="stat"><div class="n">15+</div><div class="l">Años en control de costos y proyectos de construcción</div></div>
+      <div class="stat"><div class="n">8</div><div class="l">Líneas de servicio, de control de obra a expediente técnico</div></div>
+      <div class="stat"><div class="n">2</div><div class="l">Mercados activos: Perú y Europa (remoto)</div></div>
+    </div>
+  </section>
+
+  <section class="section" id="servicios">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Servicios</p>
+        <h2>Lo que resuelvo para tu proyecto</h2>
+        <p>Ocho líneas de servicio que cubren desde el control integral de un proyecto nuevo hasta el expediente técnico para inversión pública.</p>
+      </div>
+
+      <div class="cards">
+        <div class="card">
+          <div class="card-media"><img src="img/control-integral.png" alt="Modelo BIM y cronograma de obra en laptop" loading="lazy"></div>
+          <div class="card-body">
+            <span class="tag">Servicio 01</span>
+            <h3>Control de proyectos integral</h3>
+            <p>Servicio completo de EDT, metrado, presupuesto, cronograma, avance y EVM para un proyecto que arranca desde cero.</p>
+            <a class="link-arrow" href="https://wa.me/51953949014?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20Control%20de%20proyectos%20integral" target="_blank" rel="noopener">Consultar
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-media"><img src="img/solo-control.png" alt="Supervisor de obra revisando indicadores de avance en tablet" loading="lazy"></div>
+          <div class="card-body">
+            <span class="tag">Servicio 02</span>
+            <h3>Solo control (avance + EVM)</h3>
+            <p>Para clientes que ya tienen su propia planificación: seguimiento de avance en campo y tablero de valor ganado (CPI/SPI).</p>
+            <a class="link-arrow" href="https://wa.me/51953949014?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20Solo%20control%20(avance%20%2B%20EVM)" target="_blank" rel="noopener">Consultar
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-media"><img src="img/modelado-bim.png" alt="Modelo BIM 3D de estructura e instalaciones" loading="lazy"></div>
+          <div class="card-body">
+            <span class="tag">Servicio 03</span>
+            <h3>Modelado y metrado BIM</h3>
+            <p>Modelado en Revit (LOD 200) de estructuras y albañilería, con extracción de metrados directamente desde el modelo.</p>
+            <a class="link-arrow" href="https://wa.me/51953949014?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20Modelado%20y%20metrado%20BIM" target="_blank" rel="noopener">Consultar
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-media"><img src="img/gobernanza-bim.png" alt="Tablero de cumplimiento BIM en laptop" loading="lazy"></div>
+          <div class="card-body">
+            <span class="tag">Servicio 04</span>
+            <h3>Auditoría de gobernanza BIM</h3>
+            <p>Verificación de cumplimiento ISO 19650 y trazabilidad de datos entre plataformas CDE (Autodesk Construction Cloud, Revizto).</p>
+            <a class="link-arrow" href="https://wa.me/51953949014?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20Auditor%C3%ADa%20de%20gobernanza%20BIM" target="_blank" rel="noopener">Consultar
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-media"><img src="img/expediente-tecnico.png" alt="Expediente técnico impreso con planos" loading="lazy"></div>
+          <div class="card-body">
+            <span class="tag">Servicio 05</span>
+            <h3>Expediente técnico</h3>
+            <p>Elaboración de expedientes técnicos para inversión pública (Invierte.pe), coordinando especialistas colegiados por encargo cuando se requiere.</p>
+            <a class="link-arrow" href="https://wa.me/51953949014?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20Expediente%20t%C3%A9cnico" target="_blank" rel="noopener">Consultar
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-media"><img src="img/digitalizacion.png" alt="Digitalización de plano en CAD junto a planos físicos" loading="lazy"></div>
+          <div class="card-body">
+            <span class="tag">Servicio 06</span>
+            <h3>Digitalización de planos</h3>
+            <p>Conversión de planos físicos o en formato imagen a archivos vectoriales editables (CAD), listos para uso técnico.</p>
+            <a class="link-arrow" href="https://wa.me/51953949014?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20Digitalizaci%C3%B3n%20de%20planos" target="_blank" rel="noopener">Consultar
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-media"><img src="img/as-built.png" alt="Revisión de planos as built en obra con tablet" loading="lazy"></div>
+          <div class="card-body">
+            <span class="tag">Servicio 07</span>
+            <h3>Planos as built</h3>
+            <p>Levantamiento de redline en campo (marcado de cambios reales sobre el plano) y elaboración de los planos as built que reflejan lo realmente ejecutado en obra, para cierre y entrega del proyecto.</p>
+            <a class="link-arrow" href="https://wa.me/51953949014?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20Planos%20as%20built" target="_blank" rel="noopener">Consultar
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-media"><img src="img/planos-cad.png" alt="Elaboración de planos técnicos en AutoCAD" loading="lazy"></div>
+          <div class="card-body">
+            <span class="tag">Servicio 08</span>
+            <h3>Elaboración de planos en AutoCAD</h3>
+            <p>Desarrollo de planos técnicos de arquitectura, estructuras e instalaciones en AutoCAD, listos para revisión y aprobación.</p>
+            <a class="link-arrow" href="https://wa.me/51953949014?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20Elaboraci%C3%B3n%20de%20planos%20en%20AutoCAD" target="_blank" rel="noopener">Consultar
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="statement">
+    <div class="wrap">
+      <p class="eyebrow" style="display:flex;">Posicionamiento</p>
+      <h2>Un solo interlocutor para todo el control de tu proyecto, en vez de coordinar varios proveedores.</h2>
+    </div>
+  </section>
+
+  <section class="section alt" id="metodologia">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Metodología</p>
+        <h2>Cómo trabajo</h2>
+        <p>Un proceso de cuatro pasos, pensado para operar igual de bien desde una obra en Lima que desde Europa.</p>
+      </div>
+
+      <div class="steps">
+        <div class="step"><div class="n">01</div><h4>Levantamiento</h4><p>Reviso el proyecto tal como llega: modelo BIM, planos, presupuesto en Excel/S10 o cronograma en Primavera P6 / MS Project.</p></div>
+        <div class="step"><div class="n">02</div><h4>Modelado y metrado</h4><p>Estructuras y albañilería desde Revit (LOD 200); instalaciones y partidas de proceso, metrado manual verificado.</p></div>
+        <div class="step"><div class="n">03</div><h4>Automatización</h4><p>Presupuesto, cronograma y dashboard EVM enlazados mediante scripts propios en Python/openpyxl —trazables y auditables.</p></div>
+        <div class="step"><div class="n">04</div><h4>Seguimiento remoto</h4><p>Reportes de avance y EVM entregados de forma periódica, sin importar si la obra está en Lima o el seguimiento se hace desde Europa.</p></div>
+      </div>
+
+      <div class="tag-row">
+        <span class="tag">Revit</span>
+        <span class="tag">Python / openpyxl</span>
+        <span class="tag">EVM · PMBOK</span>
+        <span class="tag">CAPECO-FTCCP</span>
+        <span class="tag">Primavera P6</span>
+        <span class="tag">MS Project</span>
+        <span class="tag">ISO 19650</span>
+        <span class="tag">Invierte.pe</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="cobertura">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Cobertura</p>
+        <h2>Dónde trabajo</h2>
+        <p>Un mismo sistema de control, adaptado a dónde está tu proyecto y a dónde estoy yo.</p>
+      </div>
+
+      <div class="panels">
+        <div class="panel filled">
+          <p class="eyebrow">Perú</p>
+          <h3>Obra y oficina técnica</h3>
+          <p>Atención directa a proyectos de edificación e infraestructura en Lima y a nivel nacional, con visitas de campo cuando el proyecto lo requiere.</p>
+        </div>
+        <div class="panel">
+          <p class="eyebrow">Europa · remoto</p>
+          <h3>Control desde cualquier lugar</h3>
+          <p>Todo el sistema —EDT, metrado, presupuesto, cronograma, avance y EVM— está diseñado para operar en remoto, pensando en clientes en España y el resto de Europa.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt" id="sobre-mi">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Sobre mí</p>
+        <h2>Consultor</h2>
+      </div>
+
+      <div class="about">
+        <div class="about-card">
+          <div class="avatar">LV</div>
+          <div class="name">León H. Vinces de la Peña</div>
+          <div class="role">Economista · Técnico en Edificaciones (SENCICO)</div>
+          <ul>
+            <li>+15 años en proyectos de construcción</li>
+            <li>Función técnico-comercial y control de proyectos</li>
+            <li>Especialización BIM aplicada a control de obra</li>
+          </ul>
+        </div>
+        <div class="about-text">
+          <p>
+            Combino una formación en economía con una base técnica en edificaciones, algo poco común en el
+            sector: eso me permite leer un proyecto de construcción tanto desde el número como desde la obra.
+          </p>
+          <p>
+            Los más de quince años trabajando en funciones técnico-comerciales y de soporte al control de
+            proyectos me llevaron a construir un sistema propio de control —EDT, metrado, presupuesto, cronograma,
+            avance y EVM— que hoy ofrezco como consultoría independiente bajo VINDEL Project BIM, tanto para
+            proyectos en Perú como, de forma remota, para clientes en Europa.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<section class="cta">
+  <div class="wrap cta-inner">
+    <h2>Conversemos sobre tu proyecto</h2>
+    <div class="cta-methods">
+      <a class="primary" href="https://wa.me/51953949014" target="_blank" rel="noopener">WhatsApp: +51 953 949 014</a>
+      <a class="ghost" href="mailto:humberto.vinces@gmail.com">humberto.vinces@gmail.com</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="brand"><span class="mark">V</span>VINDEL Project BIM</div>
+        <p>Consultoría independiente en control de proyectos y BIM para construcción. Perú y remoto Europa.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Servicios</h5>
+        <ul>
+          <li><a href="#servicios">Control de proyectos</a></li>
+          <li><a href="#servicios">Modelado BIM</a></li>
+          <li><a href="#servicios">Expediente técnico</a></li>
+          <li><a href="#servicios">Digitalización y as built</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Empresa</h5>
+        <ul>
+          <li><a href="#metodologia">Metodología</a></li>
+          <li><a href="#cobertura">Cobertura</a></li>
+          <li><a href="#sobre-mi">Sobre mí</a></li>
+          <li><a href="mailto:humberto.vinces@gmail.com">Contacto</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 VINDEL Project BIM</span>
+      <span>Control de proyectos · BIM · Perú / Europa</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
